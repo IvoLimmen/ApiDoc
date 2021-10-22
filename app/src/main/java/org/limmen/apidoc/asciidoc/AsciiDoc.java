@@ -1,4 +1,4 @@
-package org.limmen.apidoc;
+package org.limmen.apidoc.asciidoc;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -91,6 +91,10 @@ public class AsciiDoc {
     section(5, title);
   }
 
+  public void sidebar() {
+    this.printStream.println("[sidebar]");
+  }
+
   public void ul(String text) {
     this.printStream.println("* " + text);
   }
@@ -114,7 +118,11 @@ public class AsciiDoc {
   }
 
   public void par(String text) {
-    this.printStream.println(text);
+    this.printStream.println(text);    
+    eol();    
+  }
+
+  public void eol() {
     this.printStream.println();
   }
 
@@ -126,6 +134,10 @@ public class AsciiDoc {
         tableCell(TableCellModifier.HEADER, h);
       }
     });
+  }
+
+  public void tableCellStarter(TableCellModifier mod) {
+    this.printStream.print(mod.getValue() + "| ");
   }
 
   public void tableCell(TableCellModifier mod, String cell) {

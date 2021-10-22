@@ -1,4 +1,4 @@
-package org.limmen.apidoc;
+package org.limmen.apidoc.asciidoc;
 
 public enum TableCellModifier {
   
