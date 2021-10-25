@@ -1,6 +1,5 @@
 package org.limmen.apidoc;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -12,7 +11,7 @@ import picocli.CommandLine.Parameters;
 
 public class Main implements Callable<Integer> {
 
-  @Parameters(paramLabel = "FILE", description = "OpenApi files to convert to AsciiDoc")
+  @Parameters(arity = "1..*", description = "OpenApi files to convert to AsciiDoc")
   List<Path> files;
 
   @Option(names = { "-o", "--output" }, description = "Output directory to write to")
