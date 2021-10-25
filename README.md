@@ -36,3 +36,46 @@ The application can convert multiple JSON files in one go by speficying one outp
     java -jar apidoc-app-0.1.jar --output=~/Downloads data/example1.json data/example2.json data/example3.json data/example4.json
 
 This will create: `exampl1.adoc`, `exampl2.adoc`, `exampl3.adoc` and `exampl4.adoc` in `~/Downloads`
+
+## What does this tool convert?
+
+The following models from OpenAPI are being converted to AsciiDoc:
+
+* Info
+  * Title
+  * Description
+  * Version
+  * Contact information
+* Paths (sorted!)
+  * Per path the operations if they are present in the order:
+    * delete
+    * get
+    * head
+    * options
+    * patch
+    * post
+    * put
+    * trace
+* Per operation:
+  * the current path
+  * the call (method and path)
+  * If the method is deprecated (warning)
+  * Description
+  * Summary
+  * RequestBody
+    * Description
+    * If the body is required
+    * Shows object references per media type
+  * Parameters
+    * Lists type,name,description,schema and default
+    * Also adds examples in the default column
+  * Responses
+    * Shows object references per media type
+    * Currently does not list anonymous types
+
+The following stuff is not (yet?) handled:
+  * External examples
+  * Headers
+  * Security
+  * Servers
+  * Tags

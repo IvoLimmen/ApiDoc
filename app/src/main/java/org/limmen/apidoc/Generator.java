@@ -17,6 +17,7 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
@@ -42,7 +43,7 @@ public class Generator {
       handleInfo(openApi.getInfo());
       handlePathsSorted(openApi);
       handleComponentSorted(openApi.getComponents());
-    }    
+    }
   }
 
   private void handleInfo(Info info) {
@@ -152,6 +153,11 @@ public class Generator {
     // original call
     adoc.codeBlock("shell", method.toUpperCase() + " " + path);
 
+    // deprecated?
+    if (operation.getDeprecated()) {
+      adoc.par(AsciiDoc.warning("This API is deprecated!"));
+    }
+
     // description
     if (operation.getDescription() != null && operation.getDescription().length() > 0) {
       adoc.section4("Description");
@@ -221,7 +227,7 @@ public class Generator {
     var mediaTypes = content.keySet();
 
     mediaTypes.forEach(mediaType -> {
-      adoc.ul(mediaType + ": " + getSchemaValue(content.get(mediaType).getSchema()));
+      adoc.ul(mediaType + ": " + getSchemaRefValue(content.get(mediaType).getSchema()));
     });
     adoc.eol();
   }
@@ -249,30 +255,28 @@ public class Generator {
       }
 
       adoc.tableCell(description);
-      adoc.tableCell(getSchemaValue(parameter.getSchema()));
+      adoc.tableCell(getSchemaRefValue(parameter.getSchema()));
       adoc.tableCell("");
       adoc.tableEndRow();
     });
     adoc.tableEnd();
   }
 
-  private String getSchemaValue(Schema<?> schema) {
-    var value = "";
-
+  private String getSchemaRefValue(Schema<?> schema) {
     // array of a certain type?
     if ("array".equals(schema.getType())) {
-      return getArraySchemaValue((ArraySchema) schema);
+      return getArraySchemaRefValue((ArraySchema) schema);
     } else {
       // do we have a schema reference?
       if (schema.get$ref() != null) {
-        value = AsciiDoc.link(AsciiDoc.refName(schema.get$ref()));
+        return AsciiDoc.link(AsciiDoc.refName(schema.get$ref()));
       }
     }
 
-    return value;
+    return schema.getType();
   }
 
-  private String getArraySchemaValue(ArraySchema schema) {
+  private String getArraySchemaRefValue(ArraySchema schema) {
     if (schema.getItems() != null && schema.getItems().get$ref() != null) {
       return "Array of " + AsciiDoc.link(AsciiDoc.refName(schema.getItems().get$ref()));
     } else {
