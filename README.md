@@ -37,6 +37,20 @@ The application can convert multiple JSON files in one go by speficying one outp
 
 This will create: `exampl1.adoc`, `exampl2.adoc`, `exampl3.adoc` and `exampl4.adoc` in `~/Downloads`
 
+The application can also take in URL's:
+
+    java -jar apidoc-app-0.1.jar --output=~/Downloads https://petstore3.swagger.io/api/v3/openapi.json
+
+This will create `petstore3.adoc` as file as it takes the host name as file.
+
+If you like to change the file name you can do the following:
+
+    java -jar apidoc-app-0.1.jar --output=~/Downloads https://petstore3.swagger.io/api/v3/openapi.json|output.json
+
+This will create `output.adoc` as file.
+
+These arguments can be combined as well.
+
 ## What does this tool convert?
 
 The following models from OpenAPI are being converted to AsciiDoc:
