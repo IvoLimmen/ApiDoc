@@ -17,7 +17,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
@@ -154,7 +153,7 @@ public class Generator {
     adoc.codeBlock("shell", method.toUpperCase() + " " + path);
 
     // deprecated?
-    if (operation.getDeprecated()) {
+    if (operation.getDeprecated() != null && operation.getDeprecated().booleanValue()) {
       adoc.par(AsciiDoc.warning("This API is deprecated!"));
     }
 
