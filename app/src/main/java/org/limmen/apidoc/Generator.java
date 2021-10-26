@@ -3,6 +3,7 @@ package org.limmen.apidoc;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -26,8 +27,19 @@ public class Generator {
 
   private AsciiDoc adoc;
 
+  private List<Path> generated = new ArrayList<>();
+
+  private Path outputDir;
+
+  private boolean book;
+
+  public Generator(boolean book) {
+    this.book = book;
+  }
+
   public void generate(Path inputFile, Path outputDir) throws IOException {
 
+    this.outputDir = outputDir;
     var fileName = inputFile.getFileName().toString();
     fileName = fileName.substring(0, fileName.indexOf("."));
     var outputFile = Path.of(outputDir.toString(), fileName + ".adoc");
@@ -37,11 +49,27 @@ public class Generator {
 
     try (var printStream = new PrintStream(outputFile.toFile())) {
 
-      adoc = new AsciiDoc(printStream);
+      adoc = new AsciiDoc(printStream, book ? 1 : 0);
 
       handleInfo(openApi.getInfo());
       handlePathsSorted(openApi);
       handleComponentSorted(openApi.getComponents());
+    }
+
+    generated.add(Path.of(fileName + ".adoc"));
+  }
+
+  public void createBook() throws IOException {
+
+    // cretate index here
+    var outputFile = Path.of(outputDir.toString(), "index.adoc");
+    try (var printStream = new PrintStream(outputFile.toFile())) {
+
+      adoc = new AsciiDoc(printStream, 0);
+
+      for (Path g : generated) {
+        adoc.include(g.toString());
+      }
     }
   }
 
@@ -262,6 +290,10 @@ public class Generator {
   }
 
   private String getSchemaRefValue(Schema<?> schema) {
+    if (schema == null) {
+      return "";
+    }
+
     // array of a certain type?
     if ("array".equals(schema.getType())) {
       return getArraySchemaRefValue((ArraySchema) schema);

@@ -60,12 +60,19 @@ public class AsciiDoc {
 
   private PrintStream printStream;
 
-  public AsciiDoc(PrintStream printStream) {
+  private int baseLevel;
+
+  public AsciiDoc(PrintStream printStream, int baseLevel) {
+    this.baseLevel = baseLevel;
     this.printStream = printStream;
   }
 
+  public void include(String file) {
+    this.printStream.println(String.format("include::%s[]", file));
+  }
+
   public void section(int deep, String title) {
-    this.printStream.print("#".repeat(deep));
+    this.printStream.print("#".repeat(deep + baseLevel));
     this.printStream.print(" ");
     this.printStream.println(title);
     this.printStream.println();

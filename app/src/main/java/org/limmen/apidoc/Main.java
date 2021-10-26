@@ -21,11 +21,14 @@ public class Main implements Callable<Integer> {
 
   @Option(names = { "-o", "--output" }, description = "Output directory to write to")
   private Path outputDir;
-  
+
+  @Option(names = { "-b", "--book" }, description = "Create a book from all the generated documentation")
+  private boolean book;
+
   @Override
   public Integer call() throws Exception {
 
-    var generator = new Generator();
+    var generator = new Generator(book);
 
     if (outputDir == null) {
       outputDir = Path.of(System.getProperty("user.dir"));
@@ -52,6 +55,10 @@ public class Main implements Callable<Integer> {
       generator.generate(file, outputDir);
     }
 
+    if (book) {
+      generator.createBook();
+    }
+
     return 0;
   }
 
@@ -60,12 +67,9 @@ public class Main implements Callable<Integer> {
   }
 
   private Path toPath(URI url, String fileName) throws Exception {
-    var client = HttpClient.newBuilder()
-        .build();
+    var client = HttpClient.newBuilder().build();
 
-    var request = HttpRequest.newBuilder().GET()
-        .uri(url)        
-        .build();
+    var request = HttpRequest.newBuilder().GET().uri(url).build();
 
     var response = client.send(request, BodyHandlers.ofString());
 
